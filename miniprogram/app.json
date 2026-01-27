@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/class/class",
+    "pages/task/task",
+    "pages/capture/capture",
+    "pages/confirm/confirm",
+    "pages/report/report"
+  ],
+  "window": {
+    "navigationBarTitleText": "作业 OCR 助手",
+    "navigationBarBackgroundColor": "#2F6FFF",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f7fb"
+  }
+}

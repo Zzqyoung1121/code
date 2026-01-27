@@ -1,0 +1,22 @@
+<view class="container">
+  <view class="card">
+    <view class="section-title">OCR 识别</view>
+    <view>图片 ID：{{imageId}}</view>
+    <input placeholder="手动输入识别文本（演示）" bindinput="onTextInput" value="{{recognizedText}}" />
+    <view style="height: 16rpx;"></view>
+    <view class="button-primary" bindtap="runOcr">识别</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">候选学生</view>
+    <view wx:for="{{candidates}}" wx:key="student_id" class="list-item">
+      <text>{{item.name}} ({{item.score}})</text>
+      <view class="button-secondary" bindtap="confirmSubmit" data-student-id="{{item.student_id}}">确认提交</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">提交参数</view>
+    <input placeholder="作业任务 ID" type="number" bindinput="onTaskInput" value="{{taskId}}" />
+  </view>
+</view>

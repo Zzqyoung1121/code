@@ -1,0 +1,16 @@
+<view class="container">
+  <view class="card">
+    <view class="section-title">今日概览</view>
+    <view>未确认：{{pendingCount}}</view>
+    <view>最近任务：{{latestTask.subject}}</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">快捷入口</view>
+    <view class="button-primary" bindtap="goCapture">开始拍照识别</view>
+    <view style="height: 16rpx;"></view>
+    <view class="button-secondary" bindtap="goTasks">作业任务管理</view>
+    <view style="height: 16rpx;"></view>
+    <view class="button-secondary" bindtap="goClasses">班级与名单</view>
+  </view>
+</view>
