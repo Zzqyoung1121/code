@@ -11,6 +11,8 @@ pip install -r requirements.txt
 uvicorn app.main:app --host 0.0.0.0 --port 9000
 ```
 
+> Windows 平台建议使用 `paddlepaddle==3.2.2`（requirements 已更新）。
+
 ## Docker 运行方式
 ```bash
 docker build -t homework-ocr-service .
