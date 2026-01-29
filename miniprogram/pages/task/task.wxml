@@ -1,0 +1,15 @@
+<view class="container">
+  <view class="card">
+    <view class="section-title">创建作业任务</view>
+    <input placeholder="班级 ID" type="number" bindinput="onClassIdInput" value="{{classId}}" />
+    <input placeholder="科目" bindinput="onSubjectInput" value="{{subject}}" />
+    <input placeholder="备注" bindinput="onNotesInput" value="{{notes}}" />
+    <view style="height: 16rpx;"></view>
+    <view class="button-primary" bindtap="createTask">创建任务</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">当前任务 ID</view>
+    <view>{{taskId || '暂无'}}</view>
+  </view>
+</view>

@@ -1,0 +1,23 @@
+<view class="container">
+  <view class="card">
+    <view class="section-title">作业统计</view>
+    <input placeholder="作业任务 ID" type="number" bindinput="onTaskInput" value="{{taskId}}" />
+    <view style="height: 16rpx;"></view>
+    <view class="button-primary" bindtap="loadReport">获取报表</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">统计结果</view>
+    <view>已交：{{report.totals.submitted || 0}}</view>
+    <view>未交：{{report.totals.missing || 0}}</view>
+    <view>待确认：{{report.totals.pending || 0}}</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">学生列表</view>
+    <view wx:for="{{report.entries}}" wx:key="student_id" class="list-item">
+      <text>{{item.name}} ({{item.status}})</text>
+      <text>{{item.student_number || ''}}</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,15 @@
+<view class="container">
+  <view class="card">
+    <view class="section-title">班级与名单</view>
+    <input placeholder="输入班级名称" bindinput="onClassInput" value="{{className}}" />
+    <view style="height: 16rpx;"></view>
+    <view class="button-primary" bindtap="createClass">创建班级</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">导入名单</view>
+    <view>当前班级 ID：{{classId || '未选择'}}</view>
+    <view style="height: 12rpx;"></view>
+    <view class="button-secondary" bindtap="chooseFile">选择 CSV</view>
+  </view>
+</view>

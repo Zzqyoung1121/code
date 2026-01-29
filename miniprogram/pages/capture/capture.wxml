@@ -1,0 +1,16 @@
+<view class="container">
+  <view class="card">
+    <view class="section-title">上传作业本照片</view>
+    <input placeholder="班级 ID" type="number" bindinput="onClassIdInput" value="{{classId}}" />
+    <view style="height: 16rpx;"></view>
+    <view class="button-primary" bindtap="chooseImage">选择/拍照</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">已上传图片</view>
+    <view wx:for="{{images}}" wx:key="id" class="list-item">
+      <text>#{{item.id}} {{item.filename}}</text>
+      <view class="button-secondary" bindtap="goConfirm" data-image-id="{{item.id}}">识别</view>
+    </view>
+  </view>
+</view>
