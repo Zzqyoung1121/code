@@ -38,3 +38,7 @@
 
 ## 本地与云端方案
 详见 `docs/deployment.md` 与 `docs/local_cloud_plan.md`。
+
+## UI 与索引
+- 统一索引入口：`docs/index.md`
+- UI 规划：`docs/ui.md`
