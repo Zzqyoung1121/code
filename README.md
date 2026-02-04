@@ -45,3 +45,6 @@
 
 ## 快速启动
 详见 `docs/quickstart.md`。
+
+## 本地可运行程序
+- 本地服务脚本：`scripts/serve.py`
