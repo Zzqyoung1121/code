@@ -42,3 +42,6 @@
 ## UI 与索引
 - 统一索引入口：`docs/index.md`
 - UI 规划：`docs/ui.md`
+
+## 快速启动
+详见 `docs/quickstart.md`。
