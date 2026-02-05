@@ -3,290 +3,540 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>信竞板子本地库</title>
+  <title>OI-Wiki 风格信竞板子库</title>
   <style>
-    body{margin:0;background:#f5f5f5;font-family:'Segoe UI','Microsoft YaHei',sans-serif}
-    .container{max-width:1200px;margin:0 auto;padding:16px}
-    .navbar{background:#2c3e50;color:#fff;padding:14px 16px;border-radius:8px;margin-bottom:16px;font-weight:700;font-size:22px}
-    .panel{background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:16px;margin-bottom:14px}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .input{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px}
-    .grow{flex:1}
-    .btn{border:1px solid #ddd;background:#fff;border-radius:6px;padding:8px 12px;cursor:pointer}
-    .btn.primary{background:#0d6efd;color:#fff;border-color:#0d6efd}
-    .btn.success{background:#198754;color:#fff;border-color:#198754}
-    .btn.warning{background:#ffc107;color:#222;border-color:#ffc107}
-    .btn:hover{filter:brightness(.96)}
-    .badge{display:inline-block;background:#e9ecef;border-radius:14px;padding:2px 10px;margin-right:6px;font-size:12px}
-    .card{background:#fff;border-radius:8px;box-shadow:0 1px 5px rgba(0,0,0,.1);padding:16px;margin-bottom:12px}
-    .title{font-size:20px;font-weight:700;color:#0d6efd}
-    .muted{color:#666;font-size:13px}
-    .snippet-content{max-height:120px;overflow:hidden;position:relative;line-height:1.65}
-    .snippet-content:after{content:'';position:absolute;left:0;right:0;bottom:0;height:28px;background:linear-gradient(to bottom,rgba(255,255,255,0),#fff)}
-    .hidden{display:none}
-    .editor-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    textarea{width:100%;min-height:380px;resize:vertical;padding:12px;border:1px solid #ddd;border-radius:6px;font-family:Consolas,monospace}
-    .preview{min-height:380px;border:1px solid #ddd;border-radius:6px;padding:12px;background:#fff;overflow:auto}
-    .section-title{font-size:22px;font-weight:700;margin:8px 0 14px}
-    .toolbar button{margin-right:6px}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap}
-    .tab{border:1px solid #ddd;border-radius:14px;padding:4px 12px;cursor:pointer;background:#fff}
-    .tab.active{background:#0d6efd;color:#fff;border-color:#0d6efd}
-    pre{background:#f6f8fa;padding:12px;border-radius:6px;overflow:auto}
-    code{font-family:Consolas,monospace}
-    @media (max-width:900px){.editor-wrap{grid-template-columns:1fr}}
+    :root {
+      --bg: #f5f6f7;
+      --surface: #ffffff;
+      --line: #e5e7eb;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --brand: #2563eb;
+      --top: #2f3742;
+      --side: #f8fafc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .topbar {
+      height: 56px;
+      background: var(--top);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    }
+    .brand { font-weight: 700; letter-spacing: .2px; }
+    .top-actions { display: flex; gap: 8px; align-items: center; }
+    .search {
+      width: 280px;
+      border: 1px solid #475569;
+      background: #1f2937;
+      color: #fff;
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0,1fr) 260px;
+      gap: 0;
+      min-height: calc(100vh - 56px);
+    }
+    .sidebar {
+      background: var(--side);
+      border-right: 1px solid var(--line);
+      padding: 14px 12px;
+      overflow: auto;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+    }
+    .side-title { font-size: 13px; color: var(--muted); margin: 8px 8px 12px; text-transform: uppercase; }
+    .sec { margin-bottom: 10px; }
+    .sec > .sec-name {
+      font-weight: 600;
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .sec > .sec-name:hover { background: #eef2ff; color: #1d4ed8; }
+    .entry { padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 14px; color: #334155; }
+    .entry:hover, .entry.active { background: #dbeafe; color: #1e3a8a; }
+
+    .main {
+      padding: 20px 28px 28px;
+      min-width: 0;
+    }
+    .article {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .article h1 { margin: 0 0 8px; font-size: 28px; }
+    .article .sub { color: var(--muted); margin-bottom: 16px; }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .btn {
+      border: 1px solid #d1d5db;
+      background: #fff;
+      border-radius: 6px;
+      padding: 7px 12px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .btn.success { background: #16a34a; color: #fff; border-color: #16a34a; }
+    .btn.warning { background: #f59e0b; color: #111; border-color: #f59e0b; }
+
+    .post-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
+      background: #fff;
+    }
+    .post-title { margin: 0 0 4px; color: #1d4ed8; font-size: 18px; }
+    .meta { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+    .badges { margin-bottom: 8px; }
+    .badge { display: inline-block; font-size: 12px; border-radius: 999px; padding: 2px 10px; background: #eef2ff; color: #3730a3; margin-right: 6px; }
+    .post-content { max-height: 120px; overflow: hidden; position: relative; line-height: 1.65; }
+    .post-content:after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 26px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+    }
+
+    .right {
+      border-left: 1px solid var(--line);
+      background: #fafafa;
+      padding: 14px;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow: auto;
+    }
+    .right h4 { margin: 8px 0; font-size: 14px; color: #111827; }
+    .toc-item { display: block; padding: 4px 0; color: #374151; text-decoration: none; font-size: 13px; }
+
+    .hidden { display: none !important; }
+    .input, select, textarea {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 14px;
+      background: #fff;
+    }
+    textarea { min-height: 360px; resize: vertical; font-family: Consolas, Monaco, monospace; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .preview { border: 1px solid #d1d5db; border-radius: 6px; background: #fff; padding: 12px; min-height: 360px; overflow: auto; }
+    .row { display: flex; gap: 10px; }
+    .row > * { flex: 1; }
+    pre { background: #f6f8fa; padding: 10px; border-radius: 6px; overflow-x: auto; }
+
+    @media (max-width: 1200px) {
+      .layout { grid-template-columns: 260px 1fr; }
+      .right { display: none; }
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+      .main { padding: 12px; }
+      .grid2 { grid-template-columns: 1fr; }
+      .search { width: 160px; }
+    }
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="navbar">信竞板子本地库（OI-wiki 分类）</div>
-
-  <div id="mainPage">
-    <div class="panel">
-      <div class="row">
-        <input id="searchInput" class="input grow" placeholder="搜索标题/标签/内容..." />
-        <button class="btn primary" onclick="searchSnippets()">搜索</button>
-      </div>
-      <div class="row" style="margin-top:10px">
-        <select id="categoryFilter" class="input" onchange="renderSnippetsList()"></select>
-        <button class="btn" onclick="setSort('time')">最新</button>
-        <button class="btn" onclick="setSort('likes')">最热</button>
-        <button class="btn warning" onclick="importJson()">导入JSON</button>
-        <button class="btn" onclick="exportJson()">导出JSON</button>
-        <button class="btn success" onclick="showEditPage()">添加新板子</button>
-      </div>
-      <div class="tabs" id="categoryTabs" style="margin-top:10px"></div>
+  <header class="topbar">
+    <div class="brand">OI-Wiki 风格 · 信竞板子库</div>
+    <div class="top-actions">
+      <input id="searchInput" class="search" placeholder="搜索板子内容..." />
+      <button class="btn primary" onclick="searchSnippets()">搜索</button>
     </div>
+  </header>
 
-    <div class="section-title" id="pageTitle">所有板子</div>
-    <div id="snippetsList"></div>
-  </div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="side-title">导航（OI-Wiki 分类）</div>
+      <div id="navTree"></div>
+    </aside>
 
-  <div id="editPage" class="hidden">
-    <div class="panel">
-      <div class="row" style="justify-content:space-between">
-        <div class="section-title" id="editTitle">添加新板子</div>
-        <button class="btn" onclick="showMainPage()">返回</button>
-      </div>
-      <div class="row">
-        <input id="snippetTitle" class="input grow" placeholder="标题*" />
-        <input id="snippetTags" class="input grow" placeholder="标签，逗号分隔" />
-      </div>
-      <div class="row" style="margin-top:10px">
-        <select id="snippetCategory" class="input"></select>
-        <select id="snippetOid" class="input grow"></select>
-      </div>
-      <div class="toolbar" style="margin-top:10px">
-        <button class="btn" onclick="insertText('**加粗**')">加粗</button>
-        <button class="btn" onclick="insertText('*斜体*')">斜体</button>
-        <button class="btn" onclick="insertText('## 标题')">标题</button>
-        <button class="btn" onclick="insertText('```cpp\n\n```')">代码块</button>
-        <button class="btn" onclick="insertText('$公式$')">行内公式</button>
-      </div>
-      <div class="editor-wrap" style="margin-top:10px">
-        <textarea id="editor" placeholder="Markdown 内容*"></textarea>
-        <div id="preview" class="preview"></div>
-      </div>
-      <div class="row" style="justify-content:flex-end;margin-top:10px">
-        <button class="btn success" onclick="saveSnippet()">保存</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="viewPage" class="hidden">
-    <div class="panel">
-      <div class="row" style="justify-content:space-between">
-        <div class="section-title" id="viewTitle"></div>
-        <button class="btn" onclick="showMainPage()">返回</button>
-      </div>
-      <div class="row" id="viewMeta"></div>
-      <div class="row" style="justify-content:space-between;margin:8px 0">
-        <div class="muted" id="viewTime"></div>
-        <div>
-          <button class="btn" id="editBtn">编辑</button>
-          <button class="btn" id="delBtn">删除</button>
+    <main class="main">
+      <article class="article" id="mainPage">
+        <h1 id="pageTitle">板子列表</h1>
+        <div class="sub">每条板子可绑定 OI-Wiki 条目（oid），并按分类展示。</div>
+        <div class="toolbar">
+          <select id="categoryFilter" style="max-width:220px" onchange="renderSnippetsList()"></select>
+          <button class="btn" onclick="setSort('time')">最新</button>
+          <button class="btn" onclick="setSort('likes')">最热</button>
+          <button class="btn warning" onclick="importJson()">导入 JSON</button>
+          <button class="btn" onclick="exportJson()">导出 JSON</button>
+          <button class="btn success" onclick="showEditPage()">发布板子</button>
         </div>
-      </div>
-      <div id="viewContent"></div>
-    </div>
+        <div id="snippetsList"></div>
+      </article>
+
+      <article class="article hidden" id="editPage">
+        <h1 id="editPageTitle">发布板子</h1>
+        <div class="toolbar"><button class="btn" onclick="showMainPage()">返回列表</button></div>
+        <div class="row">
+          <input id="snippetTitle" class="input" placeholder="标题*" />
+          <input id="snippetTags" class="input" placeholder="标签，逗号分隔" />
+        </div>
+        <div class="row" style="margin-top:10px">
+          <select id="snippetCategory" onchange="refreshOidOptions()"></select>
+          <select id="snippetOid"></select>
+        </div>
+        <div class="toolbar" style="margin-top:10px">
+          <button class="btn" onclick="insertText('**加粗**')">加粗</button>
+          <button class="btn" onclick="insertText('*斜体*')">斜体</button>
+          <button class="btn" onclick="insertText('## 标题')">标题</button>
+          <button class="btn" onclick="insertText('```cpp\n\n```')">代码块</button>
+          <button class="btn" onclick="insertText('$公式$')">公式</button>
+        </div>
+        <div class="grid2">
+          <textarea id="editor" placeholder="Markdown 内容*"></textarea>
+          <div id="preview" class="preview"></div>
+        </div>
+        <div class="toolbar" style="justify-content:flex-end;margin-top:10px">
+          <button class="btn success" onclick="saveSnippet()">保存</button>
+        </div>
+      </article>
+
+      <article class="article hidden" id="viewPage">
+        <h1 id="viewSnippetTitle"></h1>
+        <div class="toolbar">
+          <button class="btn" onclick="showMainPage()">返回列表</button>
+          <button class="btn" id="editSnippetBtn">编辑</button>
+          <button class="btn" id="deleteSnippetBtn">删除</button>
+        </div>
+        <div id="viewSnippetMeta" class="sub"></div>
+        <div id="viewSnippetTags"></div>
+        <div id="viewSnippetContent"></div>
+      </article>
+
+      <input type="file" id="importInput" accept=".json" class="hidden" />
+    </main>
+
+    <aside class="right">
+      <h4>快速说明</h4>
+      <a class="toc-item">• 左侧按 OI-Wiki 分类浏览</a>
+      <a class="toc-item">• 右上角搜索支持标题/标签/内容</a>
+      <a class="toc-item">• 发布时绑定 OI 条目 (oid)</a>
+      <a class="toc-item">• 数据保存在本地浏览器</a>
+      <h4 style="margin-top:14px">入口</h4>
+      <a class="toc-item" href="./catalog.json" target="_blank">catalog.json</a>
+      <a class="toc-item" href="./user_templates.json" target="_blank">user_templates.json</a>
+    </aside>
   </div>
-</div>
 
-<input type="file" id="importInput" accept=".json" class="hidden" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <script>
+    let snippetsDB = JSON.parse(localStorage.getItem('snippetsDB') || '[]');
+    let catalog = [];
+    let currentSort = 'time';
+    let currentSnippetId = null;
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-<script>
-let snippetsDB = JSON.parse(localStorage.getItem('snippetsDB') || '[]');
-let catalog = [];
-let categories = [];
-let currentSort = 'time';
-let currentId = null;
-let activeCategory = 'all';
+    async function init() {
+      try {
+        catalog = await (await fetch('./catalog.json', { cache: 'no-store' })).json();
+      } catch {
+        catalog = [];
+      }
+      renderNavTree();
+      renderCategorySelectors();
+      bindEvents();
+      renderSnippetsList();
+      updatePreview();
+    }
 
-async function init(){
-  try {
-    catalog = await (await fetch('./catalog.json', {cache:'no-store'})).json();
-  } catch {
-    catalog = [];
-  }
-  categories = catalog.map(x => x.section);
-  if (!categories.length) categories = ['basic','ds','graph','math','string'];
-  renderCategorySelectors();
-  bindEvents();
-  renderSnippetsList();
-  updatePreview();
-}
+    function bindEvents() {
+      document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchSnippets();
+      });
+      document.getElementById('editor').addEventListener('input', updatePreview);
+      document.getElementById('importInput').addEventListener('change', (e) => readImport(e.target.files[0]));
+    }
 
-function renderCategorySelectors(){
-  const f = document.getElementById('categoryFilter');
-  f.innerHTML = `<option value="all">全部分类</option>` + categories.map(c=>`<option value="${c}">${c}</option>`).join('');
-  const s = document.getElementById('snippetCategory');
-  s.innerHTML = categories.map(c=>`<option value="${c}">${c}</option>`).join('');
-  s.onchange = refreshOidOptions;
-  refreshOidOptions();
-  const tabs = document.getElementById('categoryTabs');
-  tabs.innerHTML = `<span class="tab active" data-v="all" onclick="switchCategory('all',this)">全部</span>` +
-    categories.map(c=>`<span class="tab" data-v="${c}" onclick="switchCategory('${c}',this)">${c}</span>`).join('');
-}
+    function renderNavTree() {
+      const tree = document.getElementById('navTree');
+      if (!catalog.length) {
+        tree.innerHTML = '<div class="entry">(暂无目录)</div>';
+        return;
+      }
+      tree.innerHTML = catalog.map(sec => `
+        <div class="sec">
+          <div class="sec-name" onclick="filterBySection('${esc(sec.section)}')">${esc(sec.section)}</div>
+          ${(sec.items || []).slice(0, 40).map(item => `<div class="entry" onclick="setEntryFilter('${esc(item.oid)}', this)">${esc(item.title)}</div>`).join('')}
+        </div>
+      `).join('');
+    }
 
-function switchCategory(c, el){
-  activeCategory = c;
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('categoryFilter').value = c;
-  renderSnippetsList();
-}
+    function renderCategorySelectors() {
+      const options = ['<option value="all">全部分类</option>']
+        .concat(catalog.map(c => `<option value="${esc(c.section)}">${esc(c.section)}</option>`));
+      document.getElementById('categoryFilter').innerHTML = options.join('');
 
-function refreshOidOptions(){
-  const cat = document.getElementById('snippetCategory').value;
-  const sec = catalog.find(x=>x.section===cat);
-  const opts = (sec?.items || []).map(i=>`<option value="${i.oid}">${i.title}</option>`).join('');
-  document.getElementById('snippetOid').innerHTML = opts || '<option value="">(无)</option>';
-}
+      const snippetCategory = document.getElementById('snippetCategory');
+      snippetCategory.innerHTML = catalog.map(c => `<option value="${esc(c.section)}">${esc(c.section)}</option>`).join('');
+      refreshOidOptions();
+    }
 
-function bindEvents(){
-  document.getElementById('searchInput').addEventListener('keypress', e=>{if(e.key==='Enter') searchSnippets();});
-  document.getElementById('editor').addEventListener('input', updatePreview);
-  document.getElementById('importInput').addEventListener('change', e=>readImport(e.target.files[0]));
-}
+    function refreshOidOptions() {
+      const cat = document.getElementById('snippetCategory').value;
+      const sec = catalog.find(x => x.section === cat);
+      const opts = (sec?.items || []).map(i => `<option value="${esc(i.oid)}">${esc(i.title)}</option>`).join('');
+      document.getElementById('snippetOid').innerHTML = opts || '<option value="">(无条目)</option>';
+    }
 
-function showPage(id){['mainPage','editPage','viewPage'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
-function showMainPage(){showPage('mainPage');renderSnippetsList();}
-function showEditPage(){
-  currentId = null;
-  document.getElementById('editTitle').textContent='添加新板子';
-  ['snippetTitle','snippetTags','editor'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('snippetCategory').value = categories[0] || 'basic';
-  refreshOidOptions();
-  updatePreview();
-  showPage('editPage');
-}
+    function filterBySection(section) {
+      document.getElementById('categoryFilter').value = section;
+      renderSnippetsList();
+    }
 
-function insertText(t){const e=document.getElementById('editor');const s=e.selectionStart, n=e.selectionEnd; e.value=e.value.slice(0,s)+t+e.value.slice(n); e.focus(); e.selectionStart=e.selectionEnd=s+t.length; updatePreview();}
-function updatePreview(){const el=document.getElementById('preview'); el.innerHTML=marked.parse(document.getElementById('editor').value||''); renderMathInElement(el,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}
+    function setEntryFilter(oid, el) {
+      document.querySelectorAll('.entry').forEach(x => x.classList.remove('active'));
+      el.classList.add('active');
+      renderSnippetsList('', oid);
+    }
 
-function setSort(t){currentSort=t;renderSnippetsList();}
-function searchSnippets(){renderSnippetsList(document.getElementById('searchInput').value.trim().toLowerCase());}
+    function setSort(sortType) {
+      currentSort = sortType;
+      renderSnippetsList();
+    }
 
-function renderSnippetsList(keyword=''){
-  const filterCat = document.getElementById('categoryFilter').value || activeCategory;
-  let arr = snippetsDB.filter(s => {
-    const catOk = (filterCat==='all') || s.category===filterCat;
-    const kwOk = !keyword || [s.title, s.content, (s.tags||[]).join(',')].join('\n').toLowerCase().includes(keyword);
-    return catOk && kwOk;
-  });
-  arr.sort((a,b)=> currentSort==='likes' ? (b.likes||0)-(a.likes||0) : new Date(b.createdAt)-new Date(a.createdAt));
-  document.getElementById('pageTitle').textContent = keyword ? `搜索结果：${keyword}` : '所有板子';
-  const box = document.getElementById('snippetsList');
-  if(!arr.length){box.innerHTML='<div class="panel">暂无板子</div>';return;}
-  box.innerHTML = arr.map(s=>`
-    <div class="card">
-      <div class="title">${esc(s.title)}</div>
-      <div style="margin:6px 0"><span class="badge">${esc(s.category||'uncategorized')}</span><span class="badge">${esc(s.oid||'无算法条目')}</span>${(s.tags||[]).map(t=>`<span class='badge'>${esc(t)}</span>`).join('')}</div>
-      <div class="muted">${fmt(s.createdAt)} · 点赞 ${s.likes||0}</div>
-      <div class="snippet-content">${marked.parse(s.content||'')}</div>
-      <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn primary" onclick="viewSnippet('${s.id}')">查看详情</button></div>
-    </div>`).join('');
-  renderMathInElement(box,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
-}
+    function searchSnippets() {
+      const kw = document.getElementById('searchInput').value.trim().toLowerCase();
+      renderSnippetsList(kw);
+    }
 
-function viewSnippet(id){
-  const s = snippetsDB.find(x=>x.id===id); if(!s) return;
-  currentId=id;
-  document.getElementById('viewTitle').textContent=s.title;
-  document.getElementById('viewMeta').innerHTML=`<span class='badge'>${esc(s.category||'')}</span><span class='badge'>${esc(s.oid||'')}</span>${(s.tags||[]).map(t=>`<span class='badge'>${esc(t)}</span>`).join('')}`;
-  document.getElementById('viewTime').textContent='发布于 '+fmt(s.createdAt);
-  document.getElementById('viewContent').innerHTML=marked.parse(s.content||'');
-  renderMathInElement(document.getElementById('viewContent'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
-  document.getElementById('editBtn').onclick=()=>editSnippet(id);
-  document.getElementById('delBtn').onclick=()=>{if(confirm('确认删除？')){snippetsDB=snippetsDB.filter(x=>x.id!==id);save();showMainPage();}};
-  showPage('viewPage');
-}
+    function renderSnippetsList(keyword = '', forceOid = '') {
+      const cat = document.getElementById('categoryFilter').value || 'all';
+      let list = snippetsDB.filter(s => {
+        const catOk = cat === 'all' || s.category === cat;
+        const oidOk = !forceOid || s.oid === forceOid;
+        const text = [s.title, s.content, (s.tags || []).join(',')].join('\n').toLowerCase();
+        const kwOk = !keyword || text.includes(keyword);
+        return catOk && oidOk && kwOk;
+      });
 
-function editSnippet(id){
-  const s=snippetsDB.find(x=>x.id===id); if(!s) return;
-  currentId=id;
-  document.getElementById('editTitle').textContent='编辑板子';
-  document.getElementById('snippetTitle').value=s.title;
-  document.getElementById('snippetTags').value=(s.tags||[]).join(',');
-  document.getElementById('editor').value=s.content||'';
-  document.getElementById('snippetCategory').value=s.category || categories[0];
-  refreshOidOptions();
-  document.getElementById('snippetOid').value=s.oid||'';
-  updatePreview();
-  showPage('editPage');
-}
+      list.sort((a, b) => currentSort === 'likes' ? (b.likes || 0) - (a.likes || 0) : new Date(b.createdAt) - new Date(a.createdAt));
 
-function saveSnippet(){
-  const title=document.getElementById('snippetTitle').value.trim();
-  const content=document.getElementById('editor').value.trim();
-  if(!title||!content){alert('标题和内容必填');return;}
-  const now=new Date().toISOString();
-  const item={
-    id: currentId || uid(),
-    title,
-    tags: document.getElementById('snippetTags').value.split(',').map(x=>x.trim()).filter(Boolean),
-    category: document.getElementById('snippetCategory').value,
-    oid: document.getElementById('snippetOid').value,
-    content,
-    likes: currentId ? (snippetsDB.find(x=>x.id===currentId)?.likes||0) : 0,
-    createdAt: currentId ? (snippetsDB.find(x=>x.id===currentId)?.createdAt||now) : now,
-    updatedAt: now
-  };
-  snippetsDB = currentId ? snippetsDB.map(x=>x.id===currentId?item:x) : [item,...snippetsDB];
-  save(); showMainPage();
-}
+      const container = document.getElementById('snippetsList');
+      document.getElementById('pageTitle').textContent = keyword ? `搜索结果：${keyword}` : '板子列表';
+      if (!list.length) {
+        container.innerHTML = '<div class="post-card">暂无板子，点击“发布板子”创建。</div>';
+        return;
+      }
 
-function exportJson(){
-  const data={platform:'oj-snippet-local',exportTime:new Date().toISOString(),snippets:snippetsDB};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='snippets-export.json'; a.click(); URL.revokeObjectURL(a.href);
-}
-function importJson(){document.getElementById('importInput').click();}
-function readImport(file){
-  if(!file) return;
-  const fr=new FileReader();
-  fr.onload=()=>{
-    try{
-      const data=JSON.parse(fr.result);
-      if(!Array.isArray(data.snippets)) throw new Error('缺少snippets数组');
-      const incoming=data.snippets.map(s=>({id:uid(),title:s.title||'未命名',tags:s.tags||[],category:s.category||categories[0],oid:s.oid||'',content:s.content||'',likes:s.likes||0,createdAt:s.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()}));
-      snippetsDB=[...incoming,...snippetsDB]; save(); renderSnippetsList(); alert('导入成功：'+incoming.length+' 条');
-    }catch(e){alert('导入失败：'+e.message)}
-  };
-  fr.readAsText(file,'utf-8');
-  document.getElementById('importInput').value='';
-}
+      container.innerHTML = list.map(s => `
+        <div class="post-card">
+          <h3 class="post-title">${esc(s.title)}</h3>
+          <div class="meta">${fmt(s.createdAt)} · 点赞 ${s.likes || 0}</div>
+          <div class="badges"><span class="badge">${esc(s.category || 'uncategorized')}</span><span class="badge">${esc(s.oid || '无 oid')}</span>${(s.tags || []).map(t => `<span class="badge">${esc(t)}</span>`).join('')}</div>
+          <div class="post-content">${marked.parse(s.content || '')}</div>
+          <div class="toolbar" style="justify-content:flex-end;margin:8px 0 0"><button class="btn primary" onclick="viewSnippet('${s.id}')">查看详情</button></div>
+        </div>
+      `).join('');
 
-function save(){localStorage.setItem('snippetsDB',JSON.stringify(snippetsDB));}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
-function fmt(t){return new Date(t).toLocaleString()}
-function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+      renderMathInElement(container, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ],
+        throwOnError: false
+      });
+    }
 
-init();
-</script>
+    function showPage(id) {
+      ['mainPage', 'editPage', 'viewPage'].forEach(x => document.getElementById(x).classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function showMainPage() {
+      showPage('mainPage');
+      renderSnippetsList();
+    }
+
+    function showEditPage() {
+      currentSnippetId = null;
+      document.getElementById('editPageTitle').textContent = '发布板子';
+      ['snippetTitle', 'snippetTags', 'editor'].forEach(id => document.getElementById(id).value = '');
+      refreshOidOptions();
+      updatePreview();
+      showPage('editPage');
+    }
+
+    function insertText(text) {
+      const editor = document.getElementById('editor');
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      editor.value = editor.value.slice(0, start) + text + editor.value.slice(end);
+      editor.focus();
+      editor.selectionStart = editor.selectionEnd = start + text.length;
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const box = document.getElementById('preview');
+      box.innerHTML = marked.parse(document.getElementById('editor').value || '');
+      renderMathInElement(box, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ],
+        throwOnError: false
+      });
+    }
+
+    function saveSnippet() {
+      const title = document.getElementById('snippetTitle').value.trim();
+      const content = document.getElementById('editor').value.trim();
+      if (!title || !content) {
+        alert('标题和内容必填');
+        return;
+      }
+
+      const now = new Date().toISOString();
+      const item = {
+        id: currentSnippetId || uid(),
+        title,
+        tags: document.getElementById('snippetTags').value.split(',').map(x => x.trim()).filter(Boolean),
+        category: document.getElementById('snippetCategory').value,
+        oid: document.getElementById('snippetOid').value,
+        content,
+        likes: currentSnippetId ? (snippetsDB.find(x => x.id === currentSnippetId)?.likes || 0) : 0,
+        createdAt: currentSnippetId ? (snippetsDB.find(x => x.id === currentSnippetId)?.createdAt || now) : now,
+        updatedAt: now
+      };
+
+      snippetsDB = currentSnippetId ? snippetsDB.map(x => x.id === currentSnippetId ? item : x) : [item, ...snippetsDB];
+      saveDB();
+      showMainPage();
+    }
+
+    function viewSnippet(id) {
+      const s = snippetsDB.find(x => x.id === id);
+      if (!s) return;
+      currentSnippetId = id;
+      document.getElementById('viewSnippetTitle').textContent = s.title;
+      document.getElementById('viewSnippetMeta').textContent = `分类：${s.category || ''} · OID：${s.oid || ''} · 发布：${fmt(s.createdAt)}`;
+      document.getElementById('viewSnippetTags').innerHTML = (s.tags || []).map(t => `<span class="badge">${esc(t)}</span>`).join('');
+      document.getElementById('viewSnippetContent').innerHTML = marked.parse(s.content || '');
+      renderMathInElement(document.getElementById('viewSnippetContent'), {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ],
+        throwOnError: false
+      });
+
+      document.getElementById('editSnippetBtn').onclick = () => editSnippet(id);
+      document.getElementById('deleteSnippetBtn').onclick = () => {
+        if (!confirm('确认删除该板子？')) return;
+        snippetsDB = snippetsDB.filter(x => x.id !== id);
+        saveDB();
+        showMainPage();
+      };
+
+      showPage('viewPage');
+    }
+
+    function editSnippet(id) {
+      const s = snippetsDB.find(x => x.id === id);
+      if (!s) return;
+      currentSnippetId = id;
+      document.getElementById('editPageTitle').textContent = '编辑板子';
+      document.getElementById('snippetTitle').value = s.title;
+      document.getElementById('snippetTags').value = (s.tags || []).join(',');
+      document.getElementById('editor').value = s.content || '';
+      document.getElementById('snippetCategory').value = s.category || (catalog[0]?.section || '');
+      refreshOidOptions();
+      document.getElementById('snippetOid').value = s.oid || '';
+      updatePreview();
+      showPage('editPage');
+    }
+
+    function exportJson() {
+      const data = {
+        platform: 'oj-snippet-local',
+        exportTime: new Date().toISOString(),
+        snippets: snippetsDB
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'snippets-export.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function importJson() {
+      document.getElementById('importInput').click();
+    }
+
+    function readImport(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (!Array.isArray(data.snippets)) throw new Error('缺少 snippets 数组');
+          const imported = data.snippets.map(s => ({
+            id: uid(),
+            title: s.title || '未命名',
+            tags: Array.isArray(s.tags) ? s.tags : [],
+            category: s.category || (catalog[0]?.section || 'basic'),
+            oid: s.oid || '',
+            content: s.content || '',
+            likes: typeof s.likes === 'number' ? s.likes : 0,
+            createdAt: s.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }));
+          snippetsDB = [...imported, ...snippetsDB];
+          saveDB();
+          renderSnippetsList();
+          alert(`导入成功：${imported.length} 条`);
+        } catch (err) {
+          alert('导入失败：' + err.message);
+        }
+      };
+      reader.readAsText(file, 'utf-8');
+      document.getElementById('importInput').value = '';
+    }
+
+    function saveDB() {
+      localStorage.setItem('snippetsDB', JSON.stringify(snippetsDB));
+    }
+
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2);
+    }
+
+    function fmt(iso) {
+      return new Date(iso).toLocaleString();
+    }
+
+    function esc(v) {
+      return String(v || '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    init();
+  </script>
 </body>
 </html>
