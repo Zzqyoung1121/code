@@ -19,3 +19,4 @@ scripts\serve.bat 9000
 
 - 默认端口：8000
 - BAT 会自动打开 `docs/index.md`
+- BAT 优先使用 `py`，不存在时回退到 `python`

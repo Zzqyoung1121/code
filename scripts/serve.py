@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import argparse
-from http.server import SimpleHTTPRequestHandler
-from socketserver import TCPServer
-from pathlib import Path
+import os
 import webbrowser
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 
 
 def parse_args() -> argparse.Namespace:
@@ -21,14 +21,19 @@ def main() -> None:
     args = parse_args()
     root = Path(__file__).resolve().parents[1]
     docs_index = root / "docs" / "index.md"
+    os.chdir(root)
 
-    handler = SimpleHTTPRequestHandler
-    with TCPServer(("", args.port), handler) as httpd:
+    ThreadingHTTPServer.allow_reuse_address = True
+    with ThreadingHTTPServer(("", args.port), SimpleHTTPRequestHandler) as httpd:
         if args.open:
             webbrowser.open(f"http://localhost:{args.port}/docs/index.md")
         print(f"Serving {root} at http://localhost:{args.port}")
-        print(f"Open {docs_index} for the index.")
-        httpd.serve_forever()
+        print(f"Index: {docs_index}")
+        print("Press Ctrl+C to stop.")
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("\nServer stopped.")
 
 
 if __name__ == "__main__":

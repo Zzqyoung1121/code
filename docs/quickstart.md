@@ -12,6 +12,8 @@
 python3 scripts/serve.py --port 8000 --open
 ```
 
+> 脚本已修复：会自动以仓库根目录作为服务目录，可在任意当前目录运行。
+
 ### Windows 一键启动（BAT）
 ```bat
 scripts\serve.bat
@@ -21,6 +23,8 @@ scripts\serve.bat
 ```bat
 scripts\serve.bat 9000
 ```
+
+> BAT 已兼容：优先调用 `py`，无 `py` 时自动尝试 `python`。
 
 ## 云端启动（在线）
 1) 将仓库推送至 GitHub / GitLab。  
