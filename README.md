@@ -48,3 +48,5 @@
 
 ## 本地可运行程序
 - 本地服务脚本：`scripts/serve.py`
+- Windows 启动脚本：`scripts/serve.bat`
+- UI 首页：`ui/index.html`

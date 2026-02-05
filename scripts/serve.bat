@@ -8,7 +8,7 @@ set PORT=8000
 if not "%~1"=="" set PORT=%~1
 
 echo Serving repository at http://localhost:%PORT%
-start "" "http://localhost:%PORT%/docs/index.md"
+start "" "http://localhost:%PORT%/ui/index.html"
 
 where py >nul 2>nul
 if %ERRORLEVEL%==0 (

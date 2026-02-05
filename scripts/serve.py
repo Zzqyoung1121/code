@@ -39,13 +39,13 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     root = Path(__file__).resolve().parents[1]
-    docs_index = root / "docs" / "index.md"
+    docs_index = root / "ui" / "index.html"
     os.chdir(root)
 
     ThreadingHTTPServer.allow_reuse_address = True
     with ThreadingHTTPServer(("", args.port), UTF8RequestHandler) as httpd:
         if args.open:
-            webbrowser.open(f"http://localhost:{args.port}/docs/index.md")
+            webbrowser.open(f"http://localhost:{args.port}/ui/index.html")
         print(f"Serving {root} at http://localhost:{args.port}")
         print(f"Index: {docs_index}")
         print("Press Ctrl+C to stop.")

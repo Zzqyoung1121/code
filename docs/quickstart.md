@@ -1,41 +1,28 @@
 # 快速启动
 
-本项目无需编译；可直接打开 Markdown，或运行本地服务进行浏览。
+本项目无需编译；可直接打开 UI 页面，或按需查看 Markdown 文档。
 
 ## 本地启动（离线）
-1) 克隆仓库或保持本地副本。  
-2) 打开 `docs/index.md` 作为入口索引。  
-3) 按分类进入 `templates/<分类>/<算法名>/README.md`。  
-
-### 本地服务（Python）
+### 推荐：启动 UI
 ```bash
 python3 scripts/serve.py --port 8000 --open
 ```
-
-> 脚本已修复：会自动以仓库根目录作为服务目录，可在任意当前目录运行。
+打开后默认进入：`ui/index.html`
 
 ### Windows 一键启动（BAT）
 ```bat
 scripts\serve.bat
 ```
-
 指定端口：
 ```bat
 scripts\serve.bat 9000
 ```
 
-> BAT 已兼容：优先调用 `py`，无 `py` 时自动尝试 `python`。
-
 ## 云端启动（在线）
 1) 将仓库推送至 GitHub / GitLab。  
-2) 在仓库页面直接打开 `docs/index.md`。  
-3) 按索引跳转到算法模块。  
+2) 访问 `ui/index.html`。  
+3) 按板块查看算法条目下的“用户板子评论”。
 
-## 用户板子发布
-- 每个算法模块下使用 `users/<user>/` 存放个人板子。  
-- 在对应模块的 `README.md` “用户板子”中登记入口。  
-
-
-## 中文显示异常（乱码）
-- 若浏览器打开 `docs/index.md` 出现乱码，请更新到最新版本后再启动服务。
-- 当前 `scripts/serve.py` 已为 Markdown/文本响应显式设置 `charset=utf-8`。
+## 说明
+- 当前 UI 采用“OI-wiki 风格”：每个算法条目下仅保留评论区。
+- 评论区中的每条评论就是某个用户发布的板子。
