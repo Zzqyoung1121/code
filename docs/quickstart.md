@@ -34,3 +34,8 @@ scripts\serve.bat 9000
 ## 用户板子发布
 - 每个算法模块下使用 `users/<user>/` 存放个人板子。  
 - 在对应模块的 `README.md` “用户板子”中登记入口。  
+
+
+## 中文显示异常（乱码）
+- 若浏览器打开 `docs/index.md` 出现乱码，请更新到最新版本后再启动服务。
+- 当前 `scripts/serve.py` 已为 Markdown/文本响应显式设置 `charset=utf-8`。
