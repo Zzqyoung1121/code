@@ -1,22 +1,22 @@
-# 本地启动脚本
+# 本地启动与同步脚本
 
-本目录提供可直接运行的本地服务脚本，启动后默认打开 UI 首页（`ui/index.html`）。
-
-## Linux / macOS
+## 启动 UI
+### Linux / macOS
 ```bash
 python3 scripts/serve.py --port 8000 --open
 ```
 
-## Windows (BAT)
+### Windows (BAT)
 ```bat
 scripts\serve.bat
 ```
 
-也可以指定端口：
-```bat
-scripts\serve.bat 9000
+## 同步 OI-wiki 目录（元数据）
+```bash
+python3 scripts/sync_oiwiki_catalog.py
 ```
 
 - 默认端口：8000
 - BAT 会自动打开 `ui/index.html`
 - BAT 优先使用 `py`，不存在时回退到 `python`
+- 同步脚本只抓目录元数据（title/url/oid），不抓文章正文

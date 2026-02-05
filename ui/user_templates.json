@@ -1,0 +1,13 @@
+[
+  {
+    "oid": "basic/binary-search",
+    "posts": [
+      {
+        "user": "alice",
+        "title": "二分通用板子（lower_bound / upper_bound）",
+        "link": "../templates/basic/binary_search/README.md",
+        "time": "2026-02-05"
+      }
+    ]
+  }
+]

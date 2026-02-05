@@ -50,3 +50,4 @@
 - 本地服务脚本：`scripts/serve.py`
 - Windows 启动脚本：`scripts/serve.bat`
 - UI 首页：`ui/index.html`
+- OI-wiki 目录同步脚本：`scripts/sync_oiwiki_catalog.py`

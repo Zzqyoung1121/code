@@ -12,100 +12,115 @@
     h1{font-size:22px;margin:0 0 6px} .desc{color:var(--muted);font-size:14px}
     .layout{display:grid;grid-template-columns:240px 1fr;gap:16px;margin-top:16px}
     .nav,.main{background:var(--card);border:1px solid var(--line);border-radius:10px}
-    .nav{padding:12px;position:sticky;top:96px;height:fit-content}
+    .nav{padding:12px;position:sticky;top:96px;height:fit-content;max-height:calc(100vh - 120px);overflow:auto}
     .nav a{display:block;padding:8px 10px;border-radius:6px;color:#111827;text-decoration:none}
     .nav a:hover{background:#eff6ff;color:#1d4ed8}
     .main{padding:16px}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+    .btn{display:inline-block;background:#2563eb;color:#fff;padding:8px 12px;border-radius:8px;text-decoration:none;font-size:13px}
     .section{padding:8px 0 18px;border-bottom:1px solid var(--line)}
     .section:last-child{border-bottom:none}
     .section h2{font-size:20px;margin:8px 0}
     .algo{border:1px solid var(--line);border-radius:8px;padding:12px;margin:10px 0;background:#fcfcfd}
     .algo-title{font-weight:700}
+    .algo-title a{text-decoration:none;color:#111827}
+    .algo-title a:hover{color:#1d4ed8}
     .comments{margin-top:8px}
     .comment{border-left:3px solid var(--brand);padding:8px 10px;background:#f8fbff;margin-top:8px;border-radius:4px}
     .comment .user{font-weight:600;font-size:13px}
     .comment .meta{font-size:12px;color:var(--muted)}
     .empty{font-size:13px;color:var(--muted)}
-    @media (max-width:880px){.layout{grid-template-columns:1fr}.nav{position:static}}
+    @media (max-width:880px){.layout{grid-template-columns:1fr}.nav{position:static;max-height:none}}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="top">
       <h1>NOI 板子库（OI-wiki 风格评论区）</h1>
-      <div class="desc">每个算法小板块只保留“评论区”概念：评论即用户发布的板子。</div>
+      <div class="desc">条目来自 OI-wiki 目录链接；每个算法只显示“用户模板评论”（评论=用户板子）。</div>
     </div>
 
     <div class="layout">
       <aside class="nav" id="nav"></aside>
-      <main class="main" id="main"></main>
+      <main class="main">
+        <div class="toolbar">
+          <a class="btn" href="./user_templates.json" target="_blank">云端模板数据（JSON）</a>
+          <a class="btn" href="https://github.com/new" target="_blank">像博客一样发布（GitHub 网页编辑）</a>
+        </div>
+        <div id="main"></div>
+      </main>
     </div>
   </div>
 
   <script>
-    const data = [
-      { section: '基础', items: [
-        { name: '二分', comments:[
-          { user:'alice', title:'标准 lower_bound 板子', link:'../templates/basic/binary_search/README.md', time:'2026-02-05' }
-        ]},
-        { name: '前缀和 / 差分', comments:[] },
-        { name: '双指针', comments:[] }
-      ]},
-      { section: '数据结构', items: [
-        { name: '并查集', comments:[] }, { name: '树状数组', comments:[] }, { name: '线段树（含懒标记）', comments:[] }, { name: 'Trie', comments:[] }
-      ]},
-      { section: '图论', items: [
-        { name:'BFS / DFS', comments:[] }, { name:'最短路', comments:[] }, { name:'最小生成树', comments:[] }
-      ]},
-      { section: '数学', items: [
-        { name:'快速幂', comments:[] }, { name:'扩展欧几里得', comments:[] }
-      ]},
-      { section: '字符串', items: [
-        { name:'KMP', comments:[] }, { name:'哈希', comments:[] }
-      ]}
-    ];
+    async function loadJSON(path) {
+      const res = await fetch(path, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
+      return await res.json();
+    }
 
-    const nav = document.getElementById('nav');
-    const main = document.getElementById('main');
+    function toMap(templateData) {
+      const m = new Map();
+      (templateData || []).forEach(x => m.set(x.oid, x.posts || []));
+      return m;
+    }
 
-    data.forEach((sec, idx) => {
-      const id = `sec-${idx}`;
-      const a = document.createElement('a');
-      a.href = `#${id}`;
-      a.textContent = sec.section;
-      nav.appendChild(a);
+    async function render() {
+      const [catalog, userTemplates] = await Promise.all([
+        loadJSON('./catalog.json'),
+        loadJSON('./user_templates.json')
+      ]);
 
-      const section = document.createElement('section');
-      section.className = 'section';
-      section.id = id;
-      section.innerHTML = `<h2>${sec.section}</h2>`;
+      const postMap = toMap(userTemplates);
+      const nav = document.getElementById('nav');
+      const main = document.getElementById('main');
 
-      sec.items.forEach(item => {
-        const algo = document.createElement('div');
-        algo.className = 'algo';
+      catalog.forEach((sec, idx) => {
+        const id = `sec-${idx}`;
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.textContent = sec.section;
+        nav.appendChild(a);
 
-        const title = document.createElement('div');
-        title.className = 'algo-title';
-        title.textContent = item.name;
-        algo.appendChild(title);
+        const section = document.createElement('section');
+        section.className = 'section';
+        section.id = id;
+        section.innerHTML = `<h2>${sec.section}</h2>`;
 
-        const comments = document.createElement('div');
-        comments.className = 'comments';
-        if (!item.comments.length) {
-          comments.innerHTML = '<div class="empty">暂无用户板子（评论）</div>';
-        } else {
-          item.comments.forEach(c => {
-            const card = document.createElement('div');
-            card.className = 'comment';
-            card.innerHTML = `<div class="user">${c.user}</div><div><a href="${c.link}">${c.title}</a></div><div class="meta">${c.time}</div>`;
-            comments.appendChild(card);
-          });
-        }
-        algo.appendChild(comments);
-        section.appendChild(algo);
+        (sec.items || []).forEach(item => {
+          const algo = document.createElement('div');
+          algo.className = 'algo';
+
+          const title = document.createElement('div');
+          title.className = 'algo-title';
+          title.innerHTML = `<a href="${item.url}" target="_blank" rel="noopener">${item.title}</a>`;
+          algo.appendChild(title);
+
+          const comments = document.createElement('div');
+          comments.className = 'comments';
+          const posts = postMap.get(item.oid) || [];
+
+          if (!posts.length) {
+            comments.innerHTML = '<div class="empty">暂无用户模板（评论）</div>';
+          } else {
+            posts.forEach(c => {
+              const card = document.createElement('div');
+              card.className = 'comment';
+              card.innerHTML = `<div class="user">${c.user}</div><div><a href="${c.link}" target="_blank" rel="noopener">${c.title}</a></div><div class="meta">${c.time}</div>`;
+              comments.appendChild(card);
+            });
+          }
+          algo.appendChild(comments);
+          section.appendChild(algo);
+        });
+
+        main.appendChild(section);
       });
+    }
 
-      main.appendChild(section);
+    render().catch(err => {
+      const main = document.getElementById('main');
+      main.innerHTML = `<div class="empty">加载失败：${err.message}</div>`;
     });
   </script>
 </body>

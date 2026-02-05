@@ -1,15 +1,14 @@
 # 快速启动
 
-本项目无需编译；可直接打开 UI 页面，或按需查看 Markdown 文档。
+本项目无需编译；直接启动本地服务即可浏览 UI。
 
-## 本地启动（离线）
-### 推荐：启动 UI
+## 本地启动
+### Linux / macOS
 ```bash
 python3 scripts/serve.py --port 8000 --open
 ```
-打开后默认进入：`ui/index.html`
 
-### Windows 一键启动（BAT）
+### Windows（BAT）
 ```bat
 scripts\serve.bat
 ```
@@ -18,11 +17,13 @@ scripts\serve.bat
 scripts\serve.bat 9000
 ```
 
-## 云端启动（在线）
-1) 将仓库推送至 GitHub / GitLab。  
-2) 访问 `ui/index.html`。  
-3) 按板块查看算法条目下的“用户板子评论”。
+## 云端模式（像博客/专栏发布模板）
+1) 打开 `ui/user_templates.json`。  
+2) 追加你的模板帖子（user/title/link/time）。  
+3) 提交后页面自动展示。  
 
-## 说明
-- 当前 UI 采用“OI-wiki 风格”：每个算法条目下仅保留评论区。
-- 评论区中的每条评论就是某个用户发布的板子。
+## OI-wiki 目录同步（可选）
+```bash
+python3 scripts/sync_oiwiki_catalog.py
+```
+说明：仅同步目录链接与标题，不复制 OI-wiki 原文。

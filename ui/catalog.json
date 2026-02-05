@@ -1,0 +1,40 @@
+[
+  {
+    "section": "basic",
+    "items": [
+      {"oid": "basic/binary-search", "title": "binary", "url": "https://oi-wiki.org/basic/binary/"},
+      {"oid": "basic/prefix-sum", "title": "prefix-sum", "url": "https://oi-wiki.org/basic/prefix-sum/"},
+      {"oid": "basic/two-pointers", "title": "two-pointers", "url": "https://oi-wiki.org/basic/two-pointer/"}
+    ]
+  },
+  {
+    "section": "ds",
+    "items": [
+      {"oid": "ds/dsu", "title": "dsu", "url": "https://oi-wiki.org/ds/dsu/"},
+      {"oid": "ds/fenwick", "title": "fenwick", "url": "https://oi-wiki.org/ds/fenwick/"},
+      {"oid": "ds/seg", "title": "seg", "url": "https://oi-wiki.org/ds/seg/"}
+    ]
+  },
+  {
+    "section": "graph",
+    "items": [
+      {"oid": "graph/dfs", "title": "dfs", "url": "https://oi-wiki.org/graph/dfs/"},
+      {"oid": "graph/bfs", "title": "bfs", "url": "https://oi-wiki.org/graph/bfs/"},
+      {"oid": "graph/dijkstra", "title": "dijkstra", "url": "https://oi-wiki.org/graph/shortest-path/"}
+    ]
+  },
+  {
+    "section": "math",
+    "items": [
+      {"oid": "math/fast-pow", "title": "fast-pow", "url": "https://oi-wiki.org/math/quick-pow/"},
+      {"oid": "math/exgcd", "title": "exgcd", "url": "https://oi-wiki.org/math/number-theory/extended-euclid/"}
+    ]
+  },
+  {
+    "section": "string",
+    "items": [
+      {"oid": "string/kmp", "title": "kmp", "url": "https://oi-wiki.org/string/kmp/"},
+      {"oid": "string/hash", "title": "hash", "url": "https://oi-wiki.org/string/hash/"}
+    ]
+  }
+]

@@ -3,19 +3,18 @@
 本地与云端 UI 保持一致：统一使用 `ui/index.html` 作为入口。
 
 ## 设计原则
-- 仿照 OI-wiki 的“条目 + 评论区”感受。
-- 每个板块下只展示算法列表。
-- 每个算法只保留“评论”区域，评论内容即用户发布的板子。
+- UI 仿照 OI-wiki 的“条目 + 评论区”感受。
+- 每个算法条目只保留评论区域。
+- 评论内容即用户发布的模板（板子），等价于“博客/专栏帖子”。
 
-## 信息结构
-- 板块（基础/数据结构/图论/数学/字符串/...）
-- 算法名称
-- 用户板子评论（用户名 + 标题 + 链接 + 时间）
+## 数据结构
+- `ui/catalog.json`：OI-wiki 目录链接元数据（标题 + URL + oid）
+- `ui/user_templates.json`：用户模板评论数据（按 oid 映射）
 
-## 本地
-- `python3 scripts/serve.py --open` 打开 `ui/index.html`
-- 用于离线查看与维护
+## 云端发布（像博客/专栏）
+- 用户直接在云端修改 `ui/user_templates.json`（例如 GitHub 网页编辑）并提交。
+- 合并后，UI 自动显示新模板评论。
 
-## 云端
-- 推送后可直接访问 `ui/index.html`
-- 如需更强功能，可后续接 API 持久化“评论/板子”数据
+## OI-wiki 目录同步
+- 运行 `python3 scripts/sync_oiwiki_catalog.py` 同步目录到 `ui/catalog.json`。
+- 脚本只同步目录元数据，不搬运原文内容。
