@@ -7,9 +7,19 @@
 2) 打开 `docs/index.md` 作为入口索引。  
 3) 按分类进入 `templates/<分类>/<算法名>/README.md`。  
 
-### 本地服务（可选）
+### 本地服务（Python）
 ```bash
 python3 scripts/serve.py --port 8000 --open
+```
+
+### Windows 一键启动（BAT）
+```bat
+scripts\serve.bat
+```
+
+指定端口：
+```bat
+scripts\serve.bat 9000
 ```
 
 ## 云端启动（在线）
