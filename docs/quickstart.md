@@ -16,6 +16,10 @@ scripts\serve.bat
 ```bat
 scripts\serve.bat 9000
 ```
+指定 host（可选，默认 0.0.0.0）：
+```bat
+scripts\serve.bat 9000 0.0.0.0
+```
 
 ## 其他电脑访问（同一局域网）
 - 启动后终端会显示：`LAN: http://<你的局域网IP>:8000/ui/index.html`
@@ -29,3 +33,9 @@ scripts\serve.bat 9000
 ## 批量删除模板
 - 在列表中勾选条目（或使用“全选/反选”）。
 - 点击“批量删除”一次删除多条。
+
+
+## Windows 无法被其他电脑访问排查
+- 使用 `scripts\serve.bat` 启动（已默认 `--host 0.0.0.0`）。
+- 首次运行时允许 Python 通过 Windows 防火墙（专用网络）。
+- 其他电脑访问终端显示的 `LAN URL`。

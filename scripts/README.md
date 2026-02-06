@@ -11,8 +11,19 @@ python3 scripts/serve.py --host 0.0.0.0 --port 8000 --open
 scripts\serve.bat
 ```
 
-- 启动后会输出 Local 与 LAN 地址。
-- 其他电脑访问请使用 LAN 地址（不是 localhost）。
+指定端口：
+```bat
+scripts\serve.bat 9000
+```
+
+指定端口 + host：
+```bat
+scripts\serve.bat 9000 0.0.0.0
+```
+
+- BAT 会打印 Local URL 和 LAN URL。
+- 其他电脑访问请使用 LAN URL（不是 localhost）。
+- 若仍无法访问，请放行 Windows 防火墙中的 Python。
 
 ## 同步 OI-wiki 目录（元数据）
 ```bash

@@ -1,24 +1,36 @@
 @echo off
-setlocal
+setlocal ENABLEDELAYEDEXPANSION
 
 set SCRIPT_DIR=%~dp0
-set ROOT_DIR=%SCRIPT_DIR%..
-
+set HOST=0.0.0.0
 set PORT=8000
-if not "%~1"=="" set PORT=%~1
 
-echo Serving repository at http://localhost:%PORT%
+if not "%~1"=="" set PORT=%~1
+if not "%~2"=="" set HOST=%~2
+
+echo [INFO] Starting server on %HOST%:%PORT%
+
+echo [INFO] Local URL: http://localhost:%PORT%/ui/index.html
+for /f "tokens=2 delims=:" %%I in ('ipconfig ^| findstr /r /c:"IPv4"') do (
+    set IP=%%I
+    set IP=!IP: =!
+    if not "!IP!"=="" (
+        echo [INFO] LAN URL:   http://!IP!:%PORT%/ui/index.html
+    )
+)
+
+echo [INFO] Tip: allow python.exe in Windows firewall for LAN access.
 start "" "http://localhost:%PORT%/ui/index.html"
 
 where py >nul 2>nul
 if %ERRORLEVEL%==0 (
-    py "%SCRIPT_DIR%serve.py" --port %PORT%
+    py "%SCRIPT_DIR%serve.py" --host %HOST% --port %PORT%
     goto :end
 )
 
 where python >nul 2>nul
 if %ERRORLEVEL%==0 (
-    python "%SCRIPT_DIR%serve.py" --port %PORT%
+    python "%SCRIPT_DIR%serve.py" --host %HOST% --port %PORT%
     goto :end
 )
 
