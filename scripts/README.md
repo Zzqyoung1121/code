@@ -32,3 +32,8 @@ python3 scripts/sync_oiwiki_catalog.py
 ```
 
 - 同步脚本只抓目录元数据（title/url/oid），不抓文章正文
+
+
+## Windows 兼容说明
+- 已修复部分 CMD 环境下 `此时不应有 .` 的 bat 解析错误。
+- 若你遇到该报错，请更新到最新脚本后重试。

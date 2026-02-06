@@ -9,20 +9,18 @@ if not "%~1"=="" set PORT=%~1
 if not "%~2"=="" set HOST=%~2
 
 echo [INFO] Starting server on %HOST%:%PORT%
-
 echo [INFO] Local URL: http://localhost:%PORT%/ui/index.html
 
 set LAN_IP=
-where py >nul 2>nul
-if %ERRORLEVEL%==0 (
-    for /f %%I in ('py -c "import socket; s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM); s.connect(('"'"'8.8.8.8'"'"',80)); print(s.getsockname()[0]); s.close()" 2^>nul') do set LAN_IP=%%I
-)
-if "%LAN_IP%"=="" (
-    where python >nul 2>nul
-    if %ERRORLEVEL%==0 (
-        for /f %%I in ('python -c "import socket; s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM); s.connect(('"'"'8.8.8.8'"'"',80)); print(s.getsockname()[0]); s.close()" 2^>nul') do set LAN_IP=%%I
+for /f "tokens=2 delims=:" %%I in ('ipconfig ^| findstr /i "IPv4"') do (
+    set CAND=%%I
+    set CAND=!CAND: =!
+    if not "!CAND!"=="" if /i not "!CAND!"=="127.0.0.1" (
+        set LAN_IP=!CAND!
+        goto :got_lan
     )
 )
+:got_lan
 if not "%LAN_IP%"=="" (
     echo [INFO] LAN URL:   http://%LAN_IP%:%PORT%/ui/index.html
 ) else (
@@ -43,7 +41,7 @@ if %ERRORLEVEL%==0 (
     echo [WARN] Not running as Administrator. If LAN access fails, run CMD as admin and rerun this script.
 )
 
-echo [INFO] If still unreachable: ensure both devices are on same LAN and router AP isolation is disabled.
+echo [INFO] If still unreachable: ensure both devices are on same LAN and AP isolation is disabled.
 start "" "http://localhost:%PORT%/ui/index.html"
 
 where py >nul 2>nul
