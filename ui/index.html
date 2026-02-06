@@ -184,6 +184,8 @@
           <button class="btn warning" onclick="importJson()">导入 JSON</button>
           <button class="btn" onclick="exportJson()">导出 JSON</button>
           <button class="btn success" onclick="showEditPage()">发布板子</button>
+          <button class="btn" onclick="toggleSelectAll()">全选/反选</button>
+          <button class="btn warning" onclick="deleteSelected()">批量删除</button>
         </div>
         <div id="snippetsList"></div>
       </article>
@@ -251,6 +253,7 @@
     let catalog = [];
     let currentSort = 'time';
     let currentSnippetId = null;
+    let selectedIds = new Set();
 
     async function init() {
       try {
@@ -282,7 +285,7 @@
       tree.innerHTML = catalog.map(sec => `
         <div class="sec">
           <div class="sec-name" onclick="filterBySection('${esc(sec.section)}')">${esc(sec.section)}</div>
-          ${(sec.items || []).slice(0, 40).map(item => `<div class="entry" onclick="setEntryFilter('${esc(item.oid)}', this)">${esc(item.title)}</div>`).join('')}
+          ${(sec.items || []).map(item => `<div class="entry" onclick="setEntryFilter('${esc(item.oid)}', this)">${esc(item.title)}</div>`).join('')}
         </div>
       `).join('');
     }
@@ -346,7 +349,10 @@
 
       container.innerHTML = list.map(s => `
         <div class="post-card">
-          <h3 class="post-title">${esc(s.title)}</h3>
+          <div class="row" style="align-items:center">
+            <label style="display:flex;align-items:center;gap:6px;max-width:120px;flex:0 0 auto"><input type="checkbox" ${selectedIds.has(s.id) ? 'checked' : ''} onchange="toggleOne('${s.id}', this.checked)" /> 选择</label>
+            <h3 class="post-title" style="margin:0">${esc(s.title)}</h3>
+          </div>
           <div class="meta">${fmt(s.createdAt)} · 点赞 ${s.likes || 0}</div>
           <div class="badges"><span class="badge">${esc(s.category || 'uncategorized')}</span><span class="badge">${esc(s.oid || '无 oid')}</span>${(s.tags || []).map(t => `<span class="badge">${esc(t)}</span>`).join('')}</div>
           <div class="post-content">${marked.parse(s.content || '')}</div>
@@ -518,6 +524,33 @@
       };
       reader.readAsText(file, 'utf-8');
       document.getElementById('importInput').value = '';
+    }
+
+
+    function toggleOne(id, checked) {
+      if (checked) selectedIds.add(id);
+      else selectedIds.delete(id);
+    }
+
+    function toggleSelectAll() {
+      const cat = document.getElementById('categoryFilter').value || 'all';
+      const visible = snippetsDB.filter(s => cat === 'all' || s.category === cat).map(s => s.id);
+      const allSelected = visible.length > 0 && visible.every(id => selectedIds.has(id));
+      if (allSelected) visible.forEach(id => selectedIds.delete(id));
+      else visible.forEach(id => selectedIds.add(id));
+      renderSnippetsList(document.getElementById('searchInput').value.trim().toLowerCase());
+    }
+
+    function deleteSelected() {
+      if (!selectedIds.size) {
+        alert('请先选择要删除的模板');
+        return;
+      }
+      if (!confirm(`确认批量删除 ${selectedIds.size} 条模板？`)) return;
+      snippetsDB = snippetsDB.filter(s => !selectedIds.has(s.id));
+      selectedIds.clear();
+      saveDB();
+      renderSnippetsList(document.getElementById('searchInput').value.trim().toLowerCase());
     }
 
     function saveDB() {

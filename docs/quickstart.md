@@ -5,7 +5,7 @@
 ## 本地启动
 ### Linux / macOS
 ```bash
-python3 scripts/serve.py --port 8000 --open
+python3 scripts/serve.py --host 0.0.0.0 --port 8000 --open
 ```
 
 ### Windows（BAT）
@@ -17,13 +17,15 @@ scripts\serve.bat
 scripts\serve.bat 9000
 ```
 
-## 云端模式（像博客/专栏发布模板）
-1) 打开 `ui/user_templates.json`。  
-2) 追加你的模板帖子（user/title/link/time）。  
-3) 提交后页面自动展示。  
+## 其他电脑访问（同一局域网）
+- 启动后终端会显示：`LAN: http://<你的局域网IP>:8000/ui/index.html`
+- 其他电脑请使用这个 LAN 地址访问，而不是 `localhost`。
 
-## OI-wiki 目录同步（可选）
-```bash
-python3 scripts/sync_oiwiki_catalog.py
-```
-说明：仅同步目录链接与标题，不复制 OI-wiki 原文。
+## OI-Wiki 全量分类
+- UI 已支持加载完整分类树（不再截断条目数量）。
+- 运行 `python3 scripts/sync_oiwiki_catalog.py` 可同步 OI-Wiki 元数据到 `ui/catalog.json`。
+- 若网络受限导致同步失败，请在可联网环境执行后将 `ui/catalog.json` 拷贝回来。
+
+## 批量删除模板
+- 在列表中勾选条目（或使用“全选/反选”）。
+- 点击“批量删除”一次删除多条。

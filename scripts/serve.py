@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import os
+import socket
 import webbrowser
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -27,6 +28,7 @@ class UTF8RequestHandler(SimpleHTTPRequestHandler):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Serve the NOI template library locally.")
+    parser.add_argument("--host", default="0.0.0.0", help="Host to bind (default: 0.0.0.0)")
     parser.add_argument("--port", type=int, default=8000, help="Port to bind (default: 8000)")
     parser.add_argument(
         "--open",
@@ -36,6 +38,15 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def get_lan_ip() -> str:
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            return s.getsockname()[0]
+    except OSError:
+        return "127.0.0.1"
+
+
 def main() -> None:
     args = parse_args()
     root = Path(__file__).resolve().parents[1]
@@ -43,10 +54,14 @@ def main() -> None:
     os.chdir(root)
 
     ThreadingHTTPServer.allow_reuse_address = True
-    with ThreadingHTTPServer(("", args.port), UTF8RequestHandler) as httpd:
+    with ThreadingHTTPServer((args.host, args.port), UTF8RequestHandler) as httpd:
         if args.open:
             webbrowser.open(f"http://localhost:{args.port}/ui/index.html")
-        print(f"Serving {root} at http://localhost:{args.port}")
+
+        lan_ip = get_lan_ip()
+        print(f"Serving {root}")
+        print(f"Local: http://localhost:{args.port}/ui/index.html")
+        print(f"LAN:   http://{lan_ip}:{args.port}/ui/index.html")
         print(f"Index: {docs_index}")
         print("Press Ctrl+C to stop.")
         try:
