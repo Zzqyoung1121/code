@@ -1,27 +1,23 @@
 @echo off
-setlocal ENABLEDELAYEDEXPANSION
+setlocal
 
-set SCRIPT_DIR=%~dp0
-set HOST=0.0.0.0
-set PORT=8000
+set "SCRIPT_DIR=%~dp0"
+set "HOST=0.0.0.0"
+set "PORT=8000"
 
-if not "%~1"=="" set PORT=%~1
-if not "%~2"=="" set HOST=%~2
+if not "%~1"=="" set "PORT=%~1"
+if not "%~2"=="" set "HOST=%~2"
 
 echo [INFO] Starting server on %HOST%:%PORT%
 echo [INFO] Local URL: http://localhost:%PORT%/ui/index.html
 
-set LAN_IP=
+set "LAN_IP="
 for /f "tokens=2 delims=:" %%I in ('ipconfig ^| findstr /i "IPv4"') do (
-    set CAND=%%I
-    set CAND=!CAND: =!
-    if not "!CAND!"=="" if /i not "!CAND!"=="127.0.0.1" (
-        set LAN_IP=!CAND!
-        goto :got_lan
+    for /f "tokens=* delims= " %%A in ("%%I") do (
+        if not "%%A"=="127.0.0.1" if not defined LAN_IP set "LAN_IP=%%A"
     )
 )
-:got_lan
-if not "%LAN_IP%"=="" (
+if defined LAN_IP (
     echo [INFO] LAN URL:   http://%LAN_IP%:%PORT%/ui/index.html
 ) else (
     echo [WARN] Failed to detect LAN IP automatically.
