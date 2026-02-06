@@ -11,15 +11,39 @@ if not "%~2"=="" set HOST=%~2
 echo [INFO] Starting server on %HOST%:%PORT%
 
 echo [INFO] Local URL: http://localhost:%PORT%/ui/index.html
-for /f "tokens=2 delims=:" %%I in ('ipconfig ^| findstr /r /c:"IPv4"') do (
-    set IP=%%I
-    set IP=!IP: =!
-    if not "!IP!"=="" (
-        echo [INFO] LAN URL:   http://!IP!:%PORT%/ui/index.html
+
+set LAN_IP=
+where py >nul 2>nul
+if %ERRORLEVEL%==0 (
+    for /f %%I in ('py -c "import socket; s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM); s.connect(('"'"'8.8.8.8'"'"',80)); print(s.getsockname()[0]); s.close()" 2^>nul') do set LAN_IP=%%I
+)
+if "%LAN_IP%"=="" (
+    where python >nul 2>nul
+    if %ERRORLEVEL%==0 (
+        for /f %%I in ('python -c "import socket; s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM); s.connect(('"'"'8.8.8.8'"'"',80)); print(s.getsockname()[0]); s.close()" 2^>nul') do set LAN_IP=%%I
     )
 )
+if not "%LAN_IP%"=="" (
+    echo [INFO] LAN URL:   http://%LAN_IP%:%PORT%/ui/index.html
+) else (
+    echo [WARN] Failed to detect LAN IP automatically.
+)
 
-echo [INFO] Tip: allow python.exe in Windows firewall for LAN access.
+rem Try to add firewall inbound rule (requires Administrator)
+net session >nul 2>nul
+if %ERRORLEVEL%==0 (
+    netsh advfirewall firewall delete rule name="NOI-Template-Library-%PORT%" >nul 2>nul
+    netsh advfirewall firewall add rule name="NOI-Template-Library-%PORT%" dir=in action=allow protocol=TCP localport=%PORT% profile=private >nul 2>nul
+    if %ERRORLEVEL%==0 (
+        echo [INFO] Firewall rule added for TCP %PORT% (Private profile).
+    ) else (
+        echo [WARN] Failed to add firewall rule automatically.
+    )
+) else (
+    echo [WARN] Not running as Administrator. If LAN access fails, run CMD as admin and rerun this script.
+)
+
+echo [INFO] If still unreachable: ensure both devices are on same LAN and router AP isolation is disabled.
 start "" "http://localhost:%PORT%/ui/index.html"
 
 where py >nul 2>nul

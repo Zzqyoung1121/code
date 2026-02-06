@@ -22,8 +22,9 @@ scripts\serve.bat 9000 0.0.0.0
 ```
 
 - BAT 会打印 Local URL 和 LAN URL。
+- BAT 会尝试自动添加 Windows 防火墙入站规则（管理员模式）。
 - 其他电脑访问请使用 LAN URL（不是 localhost）。
-- 若仍无法访问，请放行 Windows 防火墙中的 Python。
+- 若仍无法访问：确认同网段，并关闭 AP Isolation。
 
 ## 同步 OI-wiki 目录（元数据）
 ```bash
