@@ -12,6 +12,10 @@ python3 scripts/serve.py --host 0.0.0.0 --port 8000 --open
 ```bat
 scripts\serve.bat
 ```
+如果双击/执行 BAT 无法打开，请改用 CMD：
+```bat
+scripts\serve.cmd
+```
 指定端口：
 ```bat
 scripts\serve.bat 9000
