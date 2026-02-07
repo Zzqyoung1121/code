@@ -19,8 +19,8 @@ echo [INFO] Starting server on %HOST%:%PORT%
 echo [INFO] Local URL: http://localhost:%PORT%/ui/index.html
 
 set "LAN_IP="
-for /f "tokens=2 delims=:" %%I in ('ipconfig ^| findstr /i /c:"IPv4"') do (
-    call :set_lan_ip %%I
+for /f "usebackq delims=" %%I in (`powershell -NoProfile -Command "$ip=(Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Manual,Dhcp -ErrorAction SilentlyContinue | Where-Object { $_.IPAddress -and $_.IPAddress -ne '127.0.0.1' } | Select-Object -First 1 -ExpandProperty IPAddress); if (-not $ip) { $ip=(Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object { $_.IPAddress -and $_.IPAddress -ne '127.0.0.1' } | Select-Object -First 1 -ExpandProperty IPAddress) }; if ($ip) { Write-Output $ip }"` ) do (
+    set "LAN_IP=%%I"
 )
 if defined LAN_IP (
     echo [INFO] LAN URL:   http://%LAN_IP%:%PORT%/ui/index.html
@@ -72,7 +72,4 @@ endlocal
 goto :eof
 
 :set_lan_ip
-set "IP="
-for %%B in (%*) do set "IP=%%B"
-if not "%IP%"=="" if not "%IP%"=="127.0.0.1" if not defined LAN_IP set "LAN_IP=%IP%"
 exit /b 0
