@@ -1,2 +1,3 @@
 @echo off
-call "%~dp0serve.bat" %*
+set SERVE_BAT_INTERACTIVE=1
+cmd /k ""%~dp0serve.bat" %*"
