@@ -20,7 +20,7 @@ echo [INFO] Local URL: http://localhost:%PORT%/ui/index.html
 
 set "LAN_IP="
 for /f "tokens=2 delims=:" %%I in ('ipconfig ^| findstr /i /c:"IPv4"') do (
-    call :set_lan_ip "%%I"
+    call :set_lan_ip %%I
 )
 if defined LAN_IP (
     echo [INFO] LAN URL:   http://%LAN_IP%:%PORT%/ui/index.html
@@ -72,7 +72,7 @@ endlocal
 goto :eof
 
 :set_lan_ip
-for /f "tokens=* delims= " %%A in ("%~1") do (
-    if not "%%A"=="127.0.0.1" if not defined LAN_IP set "LAN_IP=%%A"
-)
+set "IP="
+for %%B in (%*) do set "IP=%%B"
+if not "%IP%"=="" if not "%IP%"=="127.0.0.1" if not defined LAN_IP set "LAN_IP=%IP%"
 exit /b 0
