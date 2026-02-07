@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions
 
-echo %CMDCMDLINE% | findstr /i "/c" >nul
+echo %CMDCMDLINE% | findstr /i /c:"/c" >nul 2>nul
 if %ERRORLEVEL%==0 if not defined SERVE_BAT_INTERACTIVE (
     set SERVE_BAT_INTERACTIVE=1
     cmd /k ""%~f0" %*"
