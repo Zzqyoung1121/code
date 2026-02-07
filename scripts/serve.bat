@@ -63,8 +63,13 @@ pause
 exit /b 1
 
 :end
+if defined SERVE_BAT_INTERACTIVE (
+    echo.
+    echo [INFO] Server exited. Press any key to close.
+    pause >nul
+)
 endlocal
-exit /b 0
+goto :eof
 
 :set_lan_ip
 for /f "tokens=* delims= " %%A in ("%~1") do (
