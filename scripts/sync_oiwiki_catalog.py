@@ -7,7 +7,9 @@ Priority:
 
 Only title/url/oid metadata is stored.
 """
+import argparse
 import json
+import os
 import re
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -19,6 +21,10 @@ SITEMAP_URL = "https://oi-wiki.org/sitemap.xml"
 GITHUB_TREE_URL = "https://api.github.com/repos/OI-wiki/OI-wiki/git/trees/master?recursive=1"
 ROOT = Path(__file__).resolve().parents[1]
 OUT_FILE = ROOT / "ui" / "catalog.json"
+DEFAULT_LOCAL_CANDIDATES = [
+    ROOT / "OI-wiki",
+    ROOT.parent / "OI-wiki",
+]
 
 
 def slug_to_title(slug: str) -> str:
@@ -119,7 +125,67 @@ def fetch(url: str):
         return resp.read()
 
 
+def build_catalog_from_local_docs(repo_root: Path):
+    docs_root = repo_root / "docs"
+    if not docs_root.exists():
+        raise FileNotFoundError(f"Missing docs directory: {docs_root}")
+
+    by_section: dict[str, list[dict[str, str]]] = defaultdict(list)
+
+    for md_file in docs_root.rglob("*.md"):
+        rel_path = md_file.relative_to(docs_root).as_posix()
+        if rel_path.endswith("README.md"):
+            rel_path = rel_path[: -len("README.md")].rstrip("/")
+        if not rel_path:
+            section = "home"
+            page = "index"
+        else:
+            parts = [p for p in rel_path.split("/") if p]
+            section = parts[0]
+            page = parts[-1]
+
+        oid = oid_from_path(rel_path)
+        title = slug_to_title(page)
+        oi_url = "https://oi-wiki.org/" + rel_path.strip("/") + "/"
+        by_section[section].append({"oid": oid, "title": title, "url": oi_url})
+
+    return dedupe_and_sort(by_section)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Sync OI-Wiki catalog metadata.")
+    parser.add_argument(
+        "--local",
+        type=Path,
+        default=None,
+        help="Path to a local OI-wiki repo (uses docs/).",
+    )
+    return parser.parse_args()
+
+
+def resolve_local_repo(local_arg: Path | None) -> Path | None:
+    if local_arg:
+        return local_arg
+    env_path = Path(os.environ.get("OI_WIKI_DIR", "")).expanduser()
+    if env_path.exists():
+        return env_path
+    for candidate in DEFAULT_LOCAL_CANDIDATES:
+        if candidate.exists():
+            return candidate
+    return None
+
+
 def main() -> None:
+    args = parse_args()
+    local_repo = resolve_local_repo(args.local)
+    if local_repo:
+        try:
+            catalog = build_catalog_from_local_docs(local_repo)
+            write_catalog(catalog)
+            return
+        except Exception as exc:
+            print(f"[WARN] Failed local repo scan ({local_repo}): {exc}")
+
     try:
         catalog = build_catalog_from_sitemap(fetch(SITEMAP_URL))
         write_catalog(catalog)

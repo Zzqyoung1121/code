@@ -21,9 +21,8 @@ scripts\serve.bat 9000
 scripts\serve.bat 9000 0.0.0.0
 ```
 
-- BAT 会打印 Local URL 和 LAN URL。
-- BAT 会尝试自动添加 Windows 防火墙入站规则（管理员模式）。
-- 其他电脑访问请使用 LAN URL（不是 localhost）。
+- Local/LAN URL 由 Python 启动后输出。
+- 其他电脑访问请使用 `LAN` 地址（不是 localhost）。
 - 若仍无法访问：确认同网段，并关闭 AP Isolation。
 
 ## 同步 OI-wiki 目录（元数据）
@@ -31,7 +30,10 @@ scripts\serve.bat 9000 0.0.0.0
 python3 scripts/sync_oiwiki_catalog.py
 ```
 
-- 同步脚本只抓目录元数据（title/url/oid），不抓文章正文
+- 同步脚本只抓目录元数据（title/url/oid），不抓文章正文。
+- 若网络受限，可指定本地 OI-wiki 仓库：
+  - `python3 scripts/sync_oiwiki_catalog.py --local /path/to/OI-wiki`
+  - 或设置 `OI_WIKI_DIR=/path/to/OI-wiki`
 
 
 ## Windows 兼容说明

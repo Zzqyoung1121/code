@@ -33,7 +33,9 @@ scripts\serve.bat 9000 0.0.0.0
 ## OI-Wiki 全量分类
 - UI 已支持加载完整分类树（不再截断条目数量）。
 - 运行 `python3 scripts/sync_oiwiki_catalog.py` 可同步 OI-Wiki 元数据到 `ui/catalog.json`。
-- 若网络受限导致同步失败，请在可联网环境执行后将 `ui/catalog.json` 拷贝回来。
+- 若网络受限导致同步失败，请在可联网环境执行，或提供本地 OI-wiki 仓库路径：
+  - `python3 scripts/sync_oiwiki_catalog.py --local /path/to/OI-wiki`
+  - 或设置环境变量：`OI_WIKI_DIR=/path/to/OI-wiki`
 
 ## 批量删除模板
 - 在列表中勾选条目（或使用“全选/反选”）。
