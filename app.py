@@ -1,9 +1,13 @@
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import filedialog, messagebox, ttk
+import base64
+import io
+import json
 
 try:
-    from PIL import ImageGrab, ImageTk
+    from PIL import Image, ImageGrab, ImageTk
 except ImportError:  # pragma: no cover - optional dependency
+    Image = None
     ImageGrab = None
     ImageTk = None
 
@@ -75,6 +79,12 @@ class PaintApp:
         ttk.Button(self.toolbar, text="粘贴图片", command=self.paste_image).pack(
             side=tk.LEFT, padx=4
         )
+        ttk.Button(self.toolbar, text="打开", command=self.open_file).pack(
+            side=tk.LEFT, padx=4
+        )
+        ttk.Button(self.toolbar, text="保存", command=self.save_file).pack(
+            side=tk.LEFT, padx=4
+        )
         ttk.Button(self.toolbar, text="置顶", command=self.bring_to_front).pack(
             side=tk.LEFT, padx=4
         )
@@ -107,6 +117,8 @@ class PaintApp:
         self.root.bind("<Delete>", self.on_delete_key)
         self.root.bind("<Control-z>", self.on_undo)
         self.root.bind("<Control-y>", self.on_redo)
+        self.root.bind("<Control-s>", self.save_file)
+        self.root.bind("<Control-o>", self.open_file)
 
     def _reset_scrollregion(self):
         size = 5000
@@ -373,6 +385,86 @@ class PaintApp:
             {"type": "create", "item_id": item_id, "snapshot": self._snapshot_item(item_id)}
         )
         self._expand_scrollregion(canvas_x, canvas_y)
+
+    def save_file(self, event=None):
+        path = filedialog.asksaveasfilename(
+            title="保存",
+            defaultextension=".zpaint",
+            filetypes=[("ZPaint 文件", "*.zpaint")],
+        )
+        if not path:
+            return
+
+        payload = {
+            "format": "zpaint-v1",
+            "scale_factor": self.scale_factor,
+            "items": self._serialize_items(),
+        }
+        try:
+            with open(path, "w", encoding="utf-8") as file:
+                json.dump(payload, file, ensure_ascii=False)
+            self.status.config(text=f"已保存: {path}")
+        except OSError as exc:
+            messagebox.showerror("保存失败", f"无法保存文件:\n{exc}")
+
+    def open_file(self, event=None):
+        path = filedialog.askopenfilename(
+            title="打开",
+            filetypes=[("ZPaint 文件", "*.zpaint")],
+        )
+        if not path:
+            return
+
+        try:
+            with open(path, "r", encoding="utf-8") as file:
+                payload = json.load(file)
+        except (OSError, json.JSONDecodeError) as exc:
+            messagebox.showerror("打开失败", f"无法读取文件:\n{exc}")
+            return
+
+        if payload.get("format") != "zpaint-v1":
+            messagebox.showerror("打开失败", "文件格式不受支持。")
+            return
+
+        self.clear_canvas()
+        self.undo_stack.clear()
+        self.redo_stack.clear()
+        self.scale_factor = float(payload.get("scale_factor", 1.0))
+
+        for snapshot in payload.get("items", []):
+            self._restore_serialized_snapshot(snapshot)
+
+        self._rescale_special_items()
+        self.status.config(text=f"已打开: {path}")
+
+    def _serialize_items(self):
+        snapshots = []
+        for item_id in self.object_order:
+            snapshot = self._snapshot_item(item_id)
+            if not snapshot:
+                continue
+            if snapshot["item_type"] == "image":
+                source = snapshot.get("image")
+                if source is None or Image is None:
+                    continue
+                buffer = io.BytesIO()
+                source.save(buffer, format="PNG")
+                snapshot["image"] = base64.b64encode(buffer.getvalue()).decode("ascii")
+            snapshots.append(snapshot)
+        return snapshots
+
+    def _restore_serialized_snapshot(self, snapshot):
+        if snapshot.get("item_type") == "image":
+            encoded = snapshot.get("image")
+            if not encoded:
+                return None
+            if Image is None or ImageTk is None:
+                return None
+            image_bytes = base64.b64decode(encoded.encode("ascii"))
+            source = Image.open(io.BytesIO(image_bytes)).copy()
+            snapshot = dict(snapshot)
+            snapshot["image"] = source
+        return self._restore_snapshot(snapshot)
 
     def _snapshot_item(self, item_id):
         item_type = self.objects.get(item_id)
